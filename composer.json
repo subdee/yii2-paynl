@@ -1,0 +1,21 @@
+{
+    "name": "subdee/yii2-paynl",
+    "description": "An extension to the Paynl API for Yii2",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","paynl"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Kostas Thermos",
+            "email": "info@subdee.org"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "subdee\\paynl\\": ""
+        }
+    }
+}
