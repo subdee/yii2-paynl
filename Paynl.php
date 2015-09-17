@@ -39,7 +39,7 @@ class Paynl extends Component
         $params = [
             'amount' => $amount,
             'paymentOptionId' => $method,
-            'ipAddress' => \Yii::$app->request->userHost,
+            'ipAddress' => \Yii::$app->request->userIP,
             'finishUrl' => $this->finishUrl,
             'transaction' => ['description' => substr($description, 0, 24)],
             'statsData' => ['info' => $refID]
@@ -50,6 +50,9 @@ class Paynl extends Component
         $result = $this->call($url, $params);
         if (!$result) {
             throw new \Exception('There as an error getting info from paynl.');
+        }
+        if (isset($result->status) && $result->status == 'FALSE') {
+            throw new \Exception($result->error);
         }
         if ($result->request->errorId != 0) {
             throw new \Exception($result->request->errorMessage);
@@ -104,8 +107,13 @@ class Paynl extends Component
         ];
         $params = ArrayHelper::merge($params, $extraParams);
         $params = http_build_query($params);
-        $result = json_decode(file_get_contents($url . '/' . $format . '?' . $params));
-
+        $url = "$url/$format?$params";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $result = json_decode($data);
 
         return $result;
     }
